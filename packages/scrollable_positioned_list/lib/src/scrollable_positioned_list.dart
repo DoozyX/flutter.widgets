@@ -51,6 +51,7 @@ class ScrollablePositionedList extends StatefulWidget {
     this.addAutomaticKeepAlives = true,
     this.addRepaintBoundaries = true,
     this.minCacheExtent,
+    this.cacheExtent,
   })  : assert(itemCount != null),
         assert(itemBuilder != null),
         itemPositionsNotifier = itemPositionsListener as ItemPositionsNotifier?,
@@ -78,6 +79,7 @@ class ScrollablePositionedList extends StatefulWidget {
     this.addAutomaticKeepAlives = true,
     this.addRepaintBoundaries = true,
     this.minCacheExtent,
+    this.cacheExtent,
   })  : assert(itemCount != null),
         assert(itemBuilder != null),
         assert(separatorBuilder != null),
@@ -170,6 +172,15 @@ class ScrollablePositionedList extends StatefulWidget {
   /// in builds of widgets that would otherwise already be built in the
   /// cache extent.
   final double? minCacheExtent;
+
+  /// The cache extent used by the underlying scroll lists.
+  /// See [ScrollView.cacheExtent].
+  ///
+  /// Note that the [ScrollablePositionedList] uses two lists to simulate long
+  /// scrolls, so using the [ScrollController.scrollTo] method may result
+  /// in builds of widgets that would otherwise already be built in the
+  /// cache extent.
+  final double? cacheExtent;
 
   @override
   State<StatefulWidget> createState() => _ScrollablePositionedListState();
@@ -409,7 +420,9 @@ class _ScrollablePositionedListState extends State<ScrollablePositionedList>
     );
   }
 
-  double _cacheExtent(BoxConstraints constraints) => max(
+  double _cacheExtent(BoxConstraints constraints) =>
+      widget.cacheExtent ??
+      max(
         constraints.maxHeight * _screenScrollCount,
         widget.minCacheExtent ?? 0,
       );
